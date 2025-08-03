@@ -1,0 +1,42 @@
+### obtener todos los pets
+GET http://localhost:3000/api/pets
+
+
+### obtener un character
+GET http://localhost:3000/api/pets/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+
+### crear un nuevo character
+POST http://localhost:3000/api/pets
+Content-Type: application/json
+
+{
+  "name": "Billy",
+  "birthday": "15/10/2019",
+  "size": "big",
+  "description": "fat",
+}
+
+### modificar un character (PUT - recurso completo e idempotente)
+PUT http://localhost:3000/api/pets/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+Content-Type: application/json
+
+{
+  "name": "Billy",
+  "birthday": "15/10/2019",
+  "size": "medium",
+  "description": "fat",
+}
+
+### modificar un character (PATCH - recurso parcial)
+PATCH http://localhost:3000/api/pets/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+Content-Type: application/json
+
+{
+  "name": "Billy",
+  "birthday": "15/10/2019",
+  "size": "medium",
+  "description": "fat",
+}
+
+### borrar un character
+DELETE http://localhost:3000/api/pets/a02b91bc-3769-4221-beb1-d7a3aeba7dad

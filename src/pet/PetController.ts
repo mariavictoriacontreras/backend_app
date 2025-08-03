@@ -1,20 +1,8 @@
-import express, { NextFunction, Request, Response } from 'express'
-import { Pet } from './pet/PetEntity.js'
-import { it } from 'node:test'
-import { PetRepository } from './pet/PetRepository.js'
-
-const app = express()
-app.use(express.json())
-
-//pet -> /api/pets/
-
-//post /api/pets -> crear nuevos pet
-//delete /api/pets/:id -> borrar pet con id = :id
-//put & patch /api/pets/:id -> modificar pet con id = :id
+import { Request, Response, NextFunction } from "express"
+import { PetRepository } from "./PetRepository.js"
+import { Pet } from "./PetEntity.js"
 
 const repository = new PetRepository
-
-
 
 function sanitizePetInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
@@ -32,19 +20,20 @@ function sanitizePetInput(req: Request, res: Response, next: NextFunction) {
   next()
 }
 
-app.get('/api/pets', (req, res) => {
+function findAll(req:Request, res:Response) {
   res.json({ data: repository.findAll() })
-})
+}
 
-app.get('/api/pets/:id', (req, res) => {
-  const pet = repository.findOne({id:req.params.id})
+function findOne(req:Request, res:Response) {
+    const id = req.params.id
+  const pet = repository.findOne({id})
   if (!pet) {
     return res.status(404).send({ message: 'Pet not found' })
   }
   res.json({ data: pet })
-})
+}
 
-app.post('/api/pets', sanitizePetInput, (req, res) => {
+function add(req:Request, res:Response) {
   const input = req.body.sanitizedInput
 
   const petInput = new Pet(
@@ -56,9 +45,9 @@ app.post('/api/pets', sanitizePetInput, (req, res) => {
 
   const pet = repository.add(petInput)
   return res.status(201).send({ message: 'Pet created', data: pet })
-})
+}
 
-app.put('/api/pets/:id', sanitizePetInput, (req, res) => {
+function update(req:Request, res:Response) {
   req.body.sanitizedInput.id=req.params.id
   const pet = repository.update(req.body.sanitizedInput)
 
@@ -67,20 +56,9 @@ app.put('/api/pets/:id', sanitizePetInput, (req, res) => {
   }
 
   return res.status(200).send({ message: 'Pet updated successfully', data: pet })
-})
+}
 
-app.patch('/api/pets/:id', sanitizePetInput, (req, res) => {
-  req.body.sanitizedInput.id=req.params.id
-  const pet = repository.update(req.body.sanitizedInput)
-
-  if (!pet) {
-    return res.status(404).send({ message: 'Pet not found' })
-  }
-
-  return res.status(200).send({ message: 'Pet updated successfully', data: pet })
-})
-
-app.delete('/api/pets/:id', (req, res) => {
+function remove(req:Request, res:Response) {
   const id = req.params.id
   const pet = repository.delete({id})
 
@@ -89,12 +67,6 @@ app.delete('/api/pets/:id', (req, res) => {
   } else {
     res.status(200).send({ message: 'Pet deleted successfully' })
   }
-})
+}
 
-app.use((_, res) => {
-  return res.status(404).send({ message: 'Resource not found' })
-})
-
-app.listen(3000, () => {
-  console.log('Server runnning on http://localhost:3000/')
-})
+export {sanitizePetInput, findAll, findOne, add, update, remove}
