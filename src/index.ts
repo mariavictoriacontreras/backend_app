@@ -1,7 +1,5 @@
-import express, { NextFunction, Request, Response } from 'express'
-import { Pet } from './pet/PetEntity.js'
-import { it } from 'node:test'
-import { PetRepository } from './pet/PetRepository.js'
+import express from 'express'
+import { petRouter } from './pet/PetRoutes.js'
 
 const app = express()
 app.use(express.json())
@@ -12,84 +10,9 @@ app.use(express.json())
 //delete /api/pets/:id -> borrar pet con id = :id
 //put & patch /api/pets/:id -> modificar pet con id = :id
 
-const repository = new PetRepository
 
+app.use('/api/pets', petRouter)
 
-
-function sanitizePetInput(req: Request, res: Response, next: NextFunction) {
-  req.body.sanitizedInput = {
-    name: req.body.name,
-    birthday: req.body.birthday,
-    size: req.body.size,
-    description: req.body.description,
-  }
-
-  Object.keys(req.body.sanitizedInput).forEach((key) => {
-    if (req.body.sanitizedInput[key] === undefined) {
-      delete req.body.sanitizedInput[key]
-    }
-  })
-  next()
-}
-
-app.get('/api/pets', (req, res) => {
-  res.json({ data: repository.findAll() })
-})
-
-app.get('/api/pets/:id', (req, res) => {
-  const pet = repository.findOne({id:req.params.id})
-  if (!pet) {
-    return res.status(404).send({ message: 'Pet not found' })
-  }
-  res.json({ data: pet })
-})
-
-app.post('/api/pets', sanitizePetInput, (req, res) => {
-  const input = req.body.sanitizedInput
-
-  const petInput = new Pet(
-    input.name,
-    input.birthday,
-    input.size,
-    input.description,
-  )
-
-  const pet = repository.add(petInput)
-  return res.status(201).send({ message: 'Pet created', data: pet })
-})
-
-app.put('/api/pets/:id', sanitizePetInput, (req, res) => {
-  req.body.sanitizedInput.id=req.params.id
-  const pet = repository.update(req.body.sanitizedInput)
-
-  if (!pet) {
-    return res.status(404).send({ message: 'Pet not found' })
-  }
-
-  return res.status(200).send({ message: 'Pet updated successfully', data: pet })
-})
-
-app.patch('/api/pets/:id', sanitizePetInput, (req, res) => {
-  req.body.sanitizedInput.id=req.params.id
-  const pet = repository.update(req.body.sanitizedInput)
-
-  if (!pet) {
-    return res.status(404).send({ message: 'Pet not found' })
-  }
-
-  return res.status(200).send({ message: 'Pet updated successfully', data: pet })
-})
-
-app.delete('/api/pets/:id', (req, res) => {
-  const id = req.params.id
-  const pet = repository.delete({id})
-
-  if (!pet) {
-    res.status(404).send({ message: 'Pet not found' })
-  } else {
-    res.status(200).send({ message: 'Pet deleted successfully' })
-  }
-})
 
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })
@@ -97,4 +20,4 @@ app.use((_, res) => {
 
 app.listen(3000, () => {
   console.log('Server runnning on http://localhost:3000/')
-})
+}) 

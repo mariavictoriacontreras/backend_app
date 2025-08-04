@@ -4,8 +4,9 @@ export class Pet {
   constructor(
     public name: string,
     public birthday: string,
-    public size: string,
     public description: string,
-    public id = crypto.randomUUID()
+    public user_id: number,
+    public specie_id: number,        
+    public id ?: number
   ) {}
 }

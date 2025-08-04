@@ -1,15 +1,16 @@
-import { Request, Response, NextFunction } from "express"
-import { PetRepository } from "./PetRepository.js"
-import { Pet } from "./PetEntity.js"
+import { Request, Response, NextFunction } from 'express'
+import { PetRepository } from './PetRepository.js'
+import { Pet } from './PetEntity.js'
 
-const repository = new PetRepository
+const repository = new PetRepository()
 
 function sanitizePetInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     name: req.body.name,
     birthday: req.body.birthday,
-    size: req.body.size,
     description: req.body.description,
+    user_id: req.body.user_id,
+    specie_id: req.body.specie_id,
   }
 
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -20,36 +21,36 @@ function sanitizePetInput(req: Request, res: Response, next: NextFunction) {
   next()
 }
 
-function findAll(req:Request, res:Response) {
-  res.json({ data: repository.findAll() })
+async function findAll(req: Request, res: Response) {
+  res.json({ data: await repository.findAll() })
 }
 
-function findOne(req:Request, res:Response) {
-    const id = req.params.id
-  const pet = repository.findOne({id})
+async function findOne(req: Request, res: Response) {
+  const id = req.params.id
+  const pet = await repository.findOne({ id })
   if (!pet) {
     return res.status(404).send({ message: 'Pet not found' })
   }
   res.json({ data: pet })
 }
 
-function add(req:Request, res:Response) {
+async function add(req: Request, res: Response) {
   const input = req.body.sanitizedInput
 
   const petInput = new Pet(
     input.name,
     input.birthday,
-    input.size,
     input.description,
+    input.user_id,
+    input.specie_id,
   )
 
-  const pet = repository.add(petInput)
+  const pet = await repository.add(petInput)
   return res.status(201).send({ message: 'Pet created', data: pet })
 }
 
-function update(req:Request, res:Response) {
-  req.body.sanitizedInput.id=req.params.id
-  const pet = repository.update(req.body.sanitizedInput)
+async function update(req: Request, res: Response) {
+  const pet = await repository.update(req.params.id, req.body.sanitizedInput)
 
   if (!pet) {
     return res.status(404).send({ message: 'Pet not found' })
@@ -58,9 +59,9 @@ function update(req:Request, res:Response) {
   return res.status(200).send({ message: 'Pet updated successfully', data: pet })
 }
 
-function remove(req:Request, res:Response) {
+async function remove(req: Request, res: Response) {
   const id = req.params.id
-  const pet = repository.delete({id})
+  const pet = await repository.delete({ id })
 
   if (!pet) {
     res.status(404).send({ message: 'Pet not found' })
@@ -69,4 +70,4 @@ function remove(req:Request, res:Response) {
   }
 }
 
-export {sanitizePetInput, findAll, findOne, add, update, remove}
+export { sanitizePetInput, findAll, findOne, add, update, remove }
