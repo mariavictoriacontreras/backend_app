@@ -5,13 +5,18 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec ./node_modules/.bin/ts-node src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "mikro-orm": "mikro-orm",
+    "migration:create": "mikro-orm migration:create",
+    "migration:up": "mikro-orm migration:up",
+    "migration:down": "mikro-orm migration:down"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@mikro-orm/cli": "^6.4.16",
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.19",
     "nodemon": "^3.1.10",
@@ -19,6 +24,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@mikro-orm/mysql": "^6.4.16",
     "express": "^5.1.0"
   }
 }
