@@ -1,5 +1,5 @@
 import { defineConfig } from '@mikro-orm/mysql';
-import { ENV } from './config/env'; //tenes que crear la carpeta config y poner tu env
+import { ENV } from './config/env';
 
 export default defineConfig({
   dbName: ENV.DB_NAME,
