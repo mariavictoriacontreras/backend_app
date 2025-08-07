@@ -1,5 +1,5 @@
 import { defineConfig } from '@mikro-orm/mysql';
-import { ENV } from './config/env';
+import { ENV } from './config/env.js';
 
 export default defineConfig({
   dbName: ENV.DB_NAME,

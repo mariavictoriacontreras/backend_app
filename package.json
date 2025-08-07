@@ -15,6 +15,7 @@
   "description": "",
   "devDependencies": {
     "@mikro-orm/cli": "^6.4.16",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.2",
     "@types/node": "^22.16.4",
     "nodemon": "^3.1.10",
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "@mikro-orm/mysql": "^6.4.16",
+    "cors": "^2.8.5",
     "express": "^5.1.0"
   }
 }
