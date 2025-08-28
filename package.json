@@ -14,6 +14,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@mikro-orm/cli": "^6.4.16",
     "@types/express": "^5.0.2",
     "@types/node": "^22.16.4",
     "nodemon": "^3.1.10",
@@ -23,7 +24,8 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "express": "^5.1.0",
-    "mysql2": "^3.14.2"
+    "mysql2": "^3.14.2",
+    "@mikro-orm/mysql": "^6.4.16",
+    "express": "^5.1.0"
   }
 }
