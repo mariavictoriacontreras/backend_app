@@ -1,0 +1,17 @@
+# API keys 
+.env
+
+# dependency directory
+node_modules
+
+
+dist/
+build/
+
+
+*.log
+*.tsbuildinfo
+
+# vscode
+.vscode/
+.idea/

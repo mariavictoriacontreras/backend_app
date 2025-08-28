@@ -1,3 +1,2 @@
-import { createApp } from './app'; // Ajustá el path si está en otra carpeta
-
+import { createApp } from './app.js';
 createApp();

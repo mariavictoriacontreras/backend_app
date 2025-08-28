@@ -1,12 +1,17 @@
 import express from 'express';
 import { MikroORM } from '@mikro-orm/core';
 import 'reflect-metadata';
-import mikroConfig from './mikro-orm.config';
-import { userRouter } from './routes/user.routes';
+import mikroConfig from './mikro-orm.config.js';
+import { userRouter } from './routes/user.routes.js';
+import cors from 'cors';
 
 export const createApp = async () => {
   const app = express();
   app.use(express.json());
+  app.use(cors({
+    origin: 'http://localhost:5173', 
+    credentials: true,             
+  }));
 
   const orm = await MikroORM.init(mikroConfig);
   app.set('orm', orm);

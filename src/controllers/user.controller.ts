@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { MikroORM } from '@mikro-orm/core'
-import { User } from '../entities/user'
+import { User } from '../entities/user.js'
 
 export async function getUsers(req: Request, res: Response) {
   const orm = req.app.get('orm') as MikroORM
