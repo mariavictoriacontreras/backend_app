@@ -1,30 +1,39 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyToken } from '../utils/jwt';
+import { verifyToken } from '../utils/jwt.js';
+import { DI } from '../di.js';
+import { User } from '../entities/user.js';
 
-export interface AuthRequest extends Request {
-  user?: { userId: string; email?: string };
-}
-
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // 1) token desde header Authorization: "Bearer <token>"
-    const authHeader = req.headers.authorization;
-    let token: string | undefined;
+    // Buscamos token
+    const header = req.headers.authorization;
+    const token =
+      header?.startsWith('Bearer ')
+        ? header.split(' ')[1]
+        : (req.cookies?.token ?? null);
 
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.split(' ')[1];
-    } else if (req.cookies && req.cookies.token) {
-      // 2) o desde cookie httpOnly
-      token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ message: 'Token no proporcionado' });
     }
 
-    if (!token) return res.status(401).json({ message: 'no autorizado' });
+    // Verificamos el token
+    const decoded = verifyToken(token);
+    if (!decoded || !decoded.userId) {
+      return res.status(401).json({ message: 'Token inválido' });
+    }
 
-    const payload = verifyToken(token);
-    req.user = payload;
+    // Buscamos al usuario en la DB
+    const user = await DI.em.findOne(User, { idUsuario: decoded.userId });
+    if (!user) {
+      return res.status(401).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Guardamos en req.user para las siguientes ruta
+    (req as any).user = user;
+
     next();
   } catch (err) {
-    console.error(err);
-    return res.status(401).json({ message: 'token inválido o expirado' });
+    console.error('Error en authMiddleware:', err);
+    return res.status(401).json({ message: 'Token inválido o expirado' });
   }
 };
