@@ -1,6 +1,7 @@
 import { defineConfig } from '@mikro-orm/mysql';
 import { ENV } from './config/env.js';
 import { User } from './entities/user.js';
+import { Pet } from './entities/pet.js';
 
 export default defineConfig({
   dbName: ENV.DB_NAME,
@@ -9,5 +10,5 @@ export default defineConfig({
   host: ENV.DB_HOST,
   port: ENV.DB_PORT,
   debug: ENV.NODE_ENV === 'development',
-   entities: [User],
+   entities: [User, Pet],
 });
