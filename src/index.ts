@@ -1,21 +1,16 @@
-import express from 'express';
-import usuarioRoutes from "./routes/usuarios";
+import 'dotenv/config';
+import { createApp } from './app.js';
 
-const app = express();
-const PORT = 3000;
+(async () => {
+  try {
+    await createApp();
+    console.log('Servidor arrancó correctamente.');
+  } catch (err) {
 
-app.use(express.json()); 
+    
+  console.error('ERROR al iniciar el servidor:');
+  console.error(err.stack ?? err);
+  process.exit(1);
 
-app.get('/', (_req, res) => {
-  res.send('Hola Mundo desde Node.js + TypeScript!');
-});
-
-
-app.get("/test", (_req, res) => {
-  res.send("Ruta de test OK");
-});
-app.use("/usuarios", usuarioRoutes);
-
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+  }
+})();
