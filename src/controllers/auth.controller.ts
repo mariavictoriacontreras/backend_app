@@ -9,20 +9,17 @@ const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta';
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { nombreApellido, email, direccion, telefono, password, rolId } = req.body;
+    const { nombreApellido, email, direccion, telefono, tipoDocumento, nroDocumento, password, rolId } = req.body;
     const em = DI.orm.em.fork();
     const userRepository = em.getRepository(User);
 
-    // Vemos si ya existe el usuario
     const existingUser = await userRepository.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'El usuario ya existe' });
     }
 
-    // Encripto la pass
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Busco rol (o asignar "user" por defecto)
     let role: Role | null = null;
     if (rolId) {
       role = await em.findOne(Role, { idRol: rolId });
@@ -35,12 +32,13 @@ export const register = async (req: Request, res: Response) => {
       }
     }
 
-    // Crea user
     const user = em.create(User, {
       nombreApellido,
       email,
       direccion,
       telefono,
+      tipoDocumento,
+      nroDocumento,
       password: hashedPassword,
       rol: role,
     });
@@ -60,15 +58,12 @@ export const login = async (req: Request, res: Response) => {
     const em = DI.orm.em.fork();
     const userRepository = em.getRepository(User);
 
-    // busca usuario por email
     const user = await userRepository.findOne({ email }, { populate: ['rol'] });
     if (!user) return res.status(400).json({ message: 'Usuario no encontrado' });
 
-    // Chequeamos contraseña
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(401).json({ message: 'Contraseña incorrecta' });
 
-    // Creamos token
     const token = jwt.sign(
       { userId: user.idUsuario, email: user.email, rol: user.rol.nombre },
       JWT_SECRET,

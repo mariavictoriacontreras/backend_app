@@ -36,9 +36,8 @@ export async function createUser(req: Request, res: Response) {
   const em = orm.em.fork();
 
   try {
-    const { nombreApellido, email, direccion, telefono, rolId, password } = req.body;
+    const { nombreApellido, email, direccion, telefono, tipoDocumento, nroDocumento, rolId, password } = req.body;
 
-    // Buscar rol
     const role = await em.findOne(Role, { idRol: rolId });
     if (!role) return res.status(400).json({ error: 'Rol no válido' });
 
@@ -47,6 +46,8 @@ export async function createUser(req: Request, res: Response) {
     newUser.email = email;
     newUser.direccion = direccion;
     newUser.telefono = telefono;
+    newUser.tipoDocumento = tipoDocumento;
+    newUser.nroDocumento = nroDocumento;
     newUser.password = password;
     newUser.rol = role;
 
@@ -69,7 +70,7 @@ export async function updateUser(req: Request, res: Response) {
     const user = await em.findOne(User, { idUsuario: id });
     if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-    const { nombreApellido, email, direccion, telefono, rolId } = req.body;
+    const { nombreApellido, email, direccion, telefono, tipoDocumento, nroDocumento, rolId } = req.body;
 
     if (rolId) {
       const role = await em.findOne(Role, { idRol: rolId });
@@ -81,6 +82,8 @@ export async function updateUser(req: Request, res: Response) {
     user.email = email ?? user.email;
     user.direccion = direccion ?? user.direccion;
     user.telefono = telefono ?? user.telefono;
+    user.tipoDocumento = tipoDocumento ?? user.tipoDocumento;
+    user.nroDocumento = nroDocumento ?? user.nroDocumento;
 
     await em.persistAndFlush(user);
 

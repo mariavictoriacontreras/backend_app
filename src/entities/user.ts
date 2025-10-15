@@ -18,6 +18,12 @@ export class User {
   @Property({ type: 'string' })
   telefono!: string;
 
+  @Property({ type: 'string' })
+  tipoDocumento!: string;
+
+  @Property({ type: 'string' })
+  nroDocumento!: string; 
+
   @ManyToOne(() => Role)
   rol!: Role;
 
