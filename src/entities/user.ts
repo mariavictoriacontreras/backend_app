@@ -1,14 +1,15 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, ManyToOne } from '@mikro-orm/core';
+import { Role } from './role.js';
 
 @Entity({ tableName: 'user' })
 export class User {
-  @PrimaryKey({ type: 'number' , autoincrement: true })
+  @PrimaryKey({ type: 'number', autoincrement: true })
   idUsuario?: number;
 
   @Property({ type: 'string' })
   nombreApellido!: string;
 
-  @Property({ type: 'string' , unique: true })
+  @Property({ type: 'string', unique: true })
   email!: string;
 
   @Property({ type: 'string' })
@@ -17,8 +18,8 @@ export class User {
   @Property({ type: 'string' })
   telefono!: string;
 
-  @Property({ type: 'string' })
-  rol!: string;
+  @ManyToOne(() => Role)
+  rol!: Role;
 
   @Property({ type: 'string' })
   password!: string;

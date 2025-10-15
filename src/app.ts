@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import 'reflect-metadata';
-import { initORM } from './di.js';
-import { authRouter } from './routes/auth.routes.js';
+import { DI, initORM } from './di.js';import { authRouter } from './routes/auth.routes.js';
 import { userRouter } from './routes/user.routes.js';
+import { roleRouter } from './routes/role.routes.js';
 import { register, login } from './controllers/auth.controller.js';
 import { authMiddleware } from './middleware/auth.middleware.js';
 
@@ -19,6 +19,7 @@ export const createApp = async () => {
   try {
     console.log('Iniciando MikroORM...');
     await initORM();
+    app.set('orm', DI.orm);
     console.log('MikroORM iniciado correctamente.');
   } catch (err) {
     console.error('Error iniciando MikroORM:', err);
@@ -27,6 +28,7 @@ export const createApp = async () => {
 
   app.use('/auth', authRouter);
   app.use('/users', userRouter);
+  app.use('/roles', roleRouter);
   app.post('/api/register', register);
   app.post('/api/login', login);
   app.get('/api/me', authMiddleware, (req, res) => {
