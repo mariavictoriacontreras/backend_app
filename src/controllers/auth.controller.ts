@@ -3,34 +3,44 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { DI } from '../di.js';
 import { User } from '../entities/user.js';
+import { Role } from '../entities/role.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta';
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { nombreApellido, email, direccion, telefono, rol, password } = req.body;
-
-    // Creo un nuevo EntityManager para esta request
+    const { nombreApellido, email, direccion, telefono, tipoDocumento, nroDocumento, password, rolId } = req.body;
     const em = DI.orm.em.fork();
     const userRepository = em.getRepository(User);
 
-    // Vemos si ya existe el usuario
     const existingUser = await userRepository.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'El usuario ya existe' });
     }
 
-    // Encripto la pass
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Creo y guardo el nuevo usuario
+    let role: Role | null = null;
+    if (rolId) {
+      role = await em.findOne(Role, { idRol: rolId });
+      if (!role) return res.status(400).json({ message: 'Rol no válido' });
+    } else {
+      role = await em.findOne(Role, { nombre: 'user' });
+      if (!role) {
+        role = em.create(Role, { nombre: 'user' });
+        await em.persistAndFlush(role);
+      }
+    }
+
     const user = em.create(User, {
       nombreApellido,
       email,
       direccion,
       telefono,
-      rol: rol || 'user',
+      tipoDocumento,
+      nroDocumento,
       password: hashedPassword,
+      rol: role,
     });
 
     await em.persistAndFlush(user);
@@ -45,27 +55,17 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-
-    // Creamos un nuevo EntityManager para esta request
     const em = DI.orm.em.fork();
     const userRepository = em.getRepository(User);
 
-    // busca usuario por email
-    const user = await userRepository.findOne({ email });
+    const user = await userRepository.findOne({ email }, { populate: ['rol'] });
+    if (!user) return res.status(400).json({ message: 'Usuario no encontrado' });
 
-    if (!user) {
-      return res.status(400).json({ message: 'Usuario no encontrado' });
-    }
-
-    // Chequeamos contraseña
     const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-      return res.status(401).json({ message: 'Contraseña incorrecta' });
-    }
+    if (!validPassword) return res.status(401).json({ message: 'Contraseña incorrecta' });
 
-    // Creamos token 
     const token = jwt.sign(
-      { userId: user.idUsuario, email: user.email, rol: user.rol },
+      { userId: user.idUsuario, email: user.email, rol: user.rol.nombre },
       JWT_SECRET,
       { expiresIn: '1h' }
     );
@@ -77,7 +77,7 @@ export const login = async (req: Request, res: Response) => {
         id: user.idUsuario,
         nombreApellido: user.nombreApellido,
         email: user.email,
-        rol: user.rol,
+        rol: user.rol.nombre,
       },
     });
   } catch (error) {
