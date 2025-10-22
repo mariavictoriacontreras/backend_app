@@ -9,10 +9,21 @@ const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta';
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { nombreApellido, email, direccion, telefono, tipoDocumento, nroDocumento, password, rolId } = req.body;
+    const {
+      nombreApellido,
+      email,
+      direccion,
+      telefono,
+      tipoDocumento,
+      nroDocumento,
+      password,
+      rolId,
+    } = req.body;
+
     const em = DI.orm.em.fork();
     const userRepository = em.getRepository(User);
 
+    // Verificamos si ya existe un usuario con ese email
     const existingUser = await userRepository.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'El usuario ya existe' });
@@ -20,7 +31,9 @@ export const register = async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Buscamos o asignamos rol
     let role: Role | null = null;
+
     if (rolId) {
       role = await em.findOne(Role, { idRol: rolId });
       if (!role) return res.status(400).json({ message: 'Rol no válido' });
@@ -32,6 +45,7 @@ export const register = async (req: Request, res: Response) => {
       }
     }
 
+    // Creamos el nuevo usuario
     const user = em.create(User, {
       nombreApellido,
       email,
@@ -45,10 +59,10 @@ export const register = async (req: Request, res: Response) => {
 
     await em.persistAndFlush(user);
 
-    res.status(201).json({ message: 'Usuario registrado exitosamente' });
+    return res.status(201).json({ message: 'Usuario registrado exitosamente' });
   } catch (error) {
     console.error('Error en register:', error);
-    res.status(500).json({ message: 'Error en el servidor' });
+    return res.status(500).json({ message: 'Error en el servidor' });
   }
 };
 
@@ -64,13 +78,18 @@ export const login = async (req: Request, res: Response) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(401).json({ message: 'Contraseña incorrecta' });
 
+    // Generamos token JWT
     const token = jwt.sign(
-      { userId: user.idUsuario, email: user.email, rol: user.rol.nombre },
+      {
+        userId: user.idUsuario,
+        email: user.email,
+        rol: user.rol.nombre,
+      },
       JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    res.json({
+    return res.json({
       message: 'Login exitoso',
       token,
       usuario: {
@@ -82,6 +101,6 @@ export const login = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error en login:', error);
-    res.status(500).json({ message: 'Error en el servidor' });
+    return res.status(500).json({ message: 'Error en el servidor' });
   }
 };

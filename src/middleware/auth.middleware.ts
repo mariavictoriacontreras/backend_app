@@ -5,7 +5,7 @@ import { User } from '../entities/user.js';
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // Buscamos token
+    // Buscamos token en encabezado o cookie
     const header = req.headers.authorization;
     const token =
       header?.startsWith('Bearer ')
@@ -22,14 +22,14 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
       return res.status(401).json({ message: 'Token inválido' });
     }
 
-    // Buscamos al usuario en la DB
-    const user = await DI.em.findOne(User, { idUsuario: decoded.userId });
+    // Buscamos al usuario en la base de datos
+    const user = await DI.em.findOne(User, { idUsuario: decoded.userId }, { populate: ['rol', 'linkPago'] });
     if (!user) {
       return res.status(401).json({ message: 'Usuario no encontrado' });
     }
 
-    // Guardamos en req.user para las siguientes ruta
-    (req as any).user = user;
+    // Guardamos la entidad completa en req.user
+    req.user = user;
 
     next();
   } catch (err) {
