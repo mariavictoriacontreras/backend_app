@@ -23,7 +23,6 @@ export const register = async (req: Request, res: Response) => {
     const em = DI.orm.em.fork();
     const userRepository = em.getRepository(User);
 
-    // Verificamos si ya existe un usuario con ese email
     const existingUser = await userRepository.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'El usuario ya existe' });
@@ -31,7 +30,6 @@ export const register = async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Buscamos o asignamos rol
     let role: Role | null = null;
 
     if (rolId) {
@@ -45,7 +43,6 @@ export const register = async (req: Request, res: Response) => {
       }
     }
 
-    // Creamos el nuevo usuario
     const user = em.create(User, {
       nombreApellido,
       email,
@@ -78,7 +75,6 @@ export const login = async (req: Request, res: Response) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(401).json({ message: 'Contraseña incorrecta' });
 
-    // Generamos token JWT
     const token = jwt.sign(
       {
         userId: user.idUsuario,

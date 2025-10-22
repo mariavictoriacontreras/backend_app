@@ -10,7 +10,7 @@ export const crearDonacion = async (req: Request, res: Response) => {
     const em = orm.em.fork();
 
     const { linkPagoId, monto, comentario } = req.body;
-    const user = req.user; // viene del middleware
+    const user = req.user; 
 
     if (!user) return res.status(401).json({ error: 'Usuario no autenticado' });
 
