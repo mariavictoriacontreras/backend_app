@@ -78,6 +78,11 @@ export async function updatePet(req: Request, res: Response) {
     pet.user = user ?? pet.user
     pet.specie = specie ?? pet.specie
 
+    //if birthday string -> Date
+    if (birthday) {
+      pet.birthday = new Date(birthday);
+    }
+
     await em.persistAndFlush(pet)
 
     res.json(pet)
