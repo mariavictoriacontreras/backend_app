@@ -1,105 +1,111 @@
-import { Request, Response } from 'express'
-import { MikroORM } from '@mikro-orm/core'
-import { User } from '../entities/user.js'
+import { Request, Response } from 'express';
+import { MikroORM } from '@mikro-orm/core';
+import { User } from '../entities/user.js';
+import { Role } from '../entities/role.js';
 
 export async function getUsers(req: Request, res: Response) {
-  const orm = req.app.get('orm') as MikroORM
-  const em = orm.em.fork()
+  const orm = req.app.get('orm') as MikroORM;
+  const em = orm.em.fork();
 
   try {
-    const users = await em.find(User, {})
-    res.json(users)
-  } catch (error: any) {
-    res.status(500).json({ error: 'Error al obtener usuarios' })
+    const users = await em.find(User, {}, { populate: ['rol'] });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener usuarios' });
   }
 }
 
 export async function getUserById(req: Request, res: Response) {
-  const orm = req.app.get('orm') as MikroORM
-  const em = orm.em.fork()
+  const orm = req.app.get('orm') as MikroORM;
+  const em = orm.em.fork();
 
-  const id = Number(req.params.id)
+  const id = Number(req.params.id);
 
   try {
-    const user = await em.findOne(User, { idUsuario: id })
-    if (!user) {
-      res.status(404).json({ error: 'Usuario no encontrado' })
-      return
-    }
-    res.json(user)
-  } catch (error: any) {
-    res.status(500).json({ error: 'Error al buscar el usuario' })
+    const user = await em.findOne(User, { idUsuario: id }, { populate: ['rol'] });
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al buscar el usuario' });
   }
 }
 
 export async function createUser(req: Request, res: Response) {
-  const orm = req.app.get('orm') as MikroORM
-  const em = orm.em.fork()
+  const orm = req.app.get('orm') as MikroORM;
+  const em = orm.em.fork();
 
   try {
-    const { nombreApellido, email, direccion, telefono, rol } = req.body
+    const { nombreApellido, email, direccion, telefono, tipoDocumento, nroDocumento, rolId, password } = req.body;
 
-    const newUser = new User()
-    newUser.nombreApellido = nombreApellido
-    newUser.email = email
-    newUser.direccion = direccion
-    newUser.telefono = telefono
-    newUser.rol = rol
+    const role = await em.findOne(Role, { idRol: rolId });
+    if (!role) return res.status(400).json({ error: 'Rol no válido' });
 
-    await em.persistAndFlush(newUser)
+    const newUser = new User();
+    newUser.nombreApellido = nombreApellido;
+    newUser.email = email;
+    newUser.direccion = direccion;
+    newUser.telefono = telefono;
+    newUser.tipoDocumento = tipoDocumento;
+    newUser.nroDocumento = nroDocumento;
+    newUser.password = password;
+    newUser.rol = role;
 
-    res.status(201).json(newUser)
-  } catch (error: any) {
-    res.status(500).json({ error: 'Error al crear el usuario' })
+    await em.persistAndFlush(newUser);
+
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al crear el usuario' });
   }
 }
 
 export async function updateUser(req: Request, res: Response) {
-  const orm = req.app.get('orm') as MikroORM
-  const em = orm.em.fork()
+  const orm = req.app.get('orm') as MikroORM;
+  const em = orm.em.fork();
 
-  const id = Number(req.params.id)
+  const id = Number(req.params.id);
 
   try {
-    const user = await em.findOne(User, { idUsuario: id })
-    if (!user) {
-      res.status(404).json({ error: 'Usuario no encontrado' })
-      return
+    const user = await em.findOne(User, { idUsuario: id });
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    const { nombreApellido, email, direccion, telefono, tipoDocumento, nroDocumento, rolId } = req.body;
+
+    if (rolId) {
+      const role = await em.findOne(Role, { idRol: rolId });
+      if (!role) return res.status(400).json({ error: 'Rol no válido' });
+      user.rol = role;
     }
 
-    const { nombreApellido, email, direccion, telefono, rol } = req.body
+    user.nombreApellido = nombreApellido ?? user.nombreApellido;
+    user.email = email ?? user.email;
+    user.direccion = direccion ?? user.direccion;
+    user.telefono = telefono ?? user.telefono;
+    user.tipoDocumento = tipoDocumento ?? user.tipoDocumento;
+    user.nroDocumento = nroDocumento ?? user.nroDocumento;
 
-    user.nombreApellido = nombreApellido ?? user.nombreApellido
-    user.email = email ?? user.email
-    user.direccion = direccion ?? user.direccion
-    user.telefono = telefono ?? user.telefono
-    user.rol = rol ?? user.rol
+    await em.persistAndFlush(user);
 
-    await em.persistAndFlush(user)
-
-    res.json(user)
-  } catch (error: any) {
-    res.status(500).json({ error: 'Error al actualizar usuario' })
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar usuario' });
   }
 }
 
 export async function deleteUser(req: Request, res: Response) {
-  const orm = req.app.get('orm') as MikroORM
-  const em = orm.em.fork()
+  const orm = req.app.get('orm') as MikroORM;
+  const em = orm.em.fork();
 
-  const id = Number(req.params.id)
+  const id = Number(req.params.id);
 
   try {
-    const user = await em.findOne(User, { idUsuario: id })
-    if (!user) {
-      res.status(404).json({ error: 'Usuario no encontrado' })
-      return
-    }
+    const user = await em.findOne(User, { idUsuario: id });
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-    await em.removeAndFlush(user)
-
-    res.json({ message: 'Usuario eliminado correctamente' })
-  } catch (error: any) {
-    res.status(500).json({ error: 'Error al eliminar usuario' })
+    await em.removeAndFlush(user);
+    res.json({ message: 'Usuario eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar usuario' });
   }
 }
