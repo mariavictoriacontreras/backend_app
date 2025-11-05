@@ -16,9 +16,9 @@ export class Pet {
   @Property({ type: 'string' })
   description!: string;
 
-  @Property({ type: 'string' })
-  user!: string;
+  @ManyToOne(() => User, { fieldName: 'user_id' })
+  user!: User;
 
-  @Property({ type: 'string' })
-  specie!: string;
+  @ManyToOne(() => Specie, { fieldName: 'specie_id' })
+  specie!: Specie;
 }

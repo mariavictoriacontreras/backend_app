@@ -2,7 +2,7 @@ import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
 @Entity({ tableName: 'user' })
 export class User {
-  @PrimaryKey({ type: 'number' , autoincrement: true })
+  @PrimaryKey({ type: 'number' , autoincrement: true, fieldName: 'id'  })
   idUsuario?: number;
 
   @Property({ type: 'string' })
