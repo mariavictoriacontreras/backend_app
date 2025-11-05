@@ -6,6 +6,7 @@ import { authRouter } from './routes/auth.routes.js';
 import { userRouter } from './routes/user.routes.js';
 import { specieRouter } from './routes/specie.routes.js';
 import { petRouter } from './routes/pet.routes.js';
+import { roleRouter } from './routes/role.routes.js';
 import { register, login } from './controllers/auth.controller.js';
 import { authMiddleware } from './middleware/auth.middleware.js';
 
@@ -34,6 +35,7 @@ export const createApp = async () => {
   app.use('/species', specieRouter);
   app.use('/users', userRouter);
   app.use('/pets', petRouter);
+  app.use('/roles', roleRouter);
   app.post('/api/register', register);
   app.post('/api/login', login);
   app.get('/api/me', authMiddleware, (req, res) => {
