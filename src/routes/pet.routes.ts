@@ -4,7 +4,9 @@ import {
   getPetById,
   createPet,
   updatePet,
-  deletePet
+  deletePet,
+  uploadPetImage,
+  upload,
 } from '../controllers/pet.controller.js'
 
 export const petRouter = Router()
@@ -14,3 +16,4 @@ petRouter.get('/:id', getPetById)
 petRouter.post('/', createPet)
 petRouter.put('/:id', updatePet)
 petRouter.delete('/:id', deletePet)
+petRouter.post("/upload", upload.single("image"), uploadPetImage);

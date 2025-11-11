@@ -31,6 +31,7 @@ export const createApp = async () => {
     throw err;
   }
 
+  app.use('/uploads', express.static('uploads'));
   app.use('/auth', authRouter);
   app.use('/species', specieRouter);
   app.use('/users', userRouter);
