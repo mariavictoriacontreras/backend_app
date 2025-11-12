@@ -3,6 +3,8 @@ import { MikroORM } from '@mikro-orm/core';
 import { Pet } from '../entities/pet.js';
 import { User } from '../entities/user.js';
 import { Specie } from '../entities/specie.js';
+import multer from "multer";
+import path from "path";
 
 // Obtener todas las mascotas
 export async function getPets(req: Request, res: Response) {
@@ -43,7 +45,7 @@ export async function createPet(req: Request, res: Response) {
   const em = orm.em.fork();
 
   try {
-    const { name, birthday, description, userId, specieId } = req.body
+    const { name, birthday, description, userId, specieId, imageUrl } = req.body
 
     const user = await em.findOne(User, { idUsuario: userId });
     if (!user) return res.status(400).json({ error: 'Usuario no válido' });
@@ -56,6 +58,7 @@ export async function createPet(req: Request, res: Response) {
     newPet.description = description
     newPet.user = user
     newPet.specie = specie
+    newPet.imageUrl = imageUrl || null;
     await em.persistAndFlush(newPet)
 
     res.status(201).json(newPet)
@@ -78,7 +81,7 @@ export async function updatePet(req: Request, res: Response) {
       return
     }
 
-    const { name, birthday, description, userId, specieId } = req.body
+    const { name, birthday, description, userId, specieId, imageUrl } = req.body
 
     if (userId) {
       const user = await em.findOne(User, { idUsuario: userId });
@@ -95,6 +98,7 @@ export async function updatePet(req: Request, res: Response) {
     pet.name = name ?? pet.name
     pet.birthday = birthday ?? pet.birthday
     pet.description = description ?? pet.description
+    pet.imageUrl = imageUrl ?? pet.imageUrl;
 
     //if birthday string -> Date
     if (birthday) {
@@ -130,3 +134,27 @@ export async function deletePet(req: Request, res: Response) {
     res.status(500).json({ error: 'Error al eliminar la mascota' })
   }
 }
+
+// Configuración de multer
+const storage = multer.diskStorage({
+  destination: (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
+    cb(null, "uploads/pets"); // carpeta donde se guardan
+  },
+  filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
+    const uniqueName = Date.now() + "-" + file.originalname;
+    cb(null, uniqueName);
+  },
+});
+
+export const upload = multer({ storage });
+
+// Nuevo endpoint para subir imagen
+export async function uploadPetImage(req: Request, res: Response) {
+  if (!req.file) {
+    return res.status(400).json({ error: "No se subió ninguna imagen" });
+  }
+
+  const imageUrl = `/uploads/pets/${req.file.filename}`;
+  res.json({ imageUrl });
+}
+
