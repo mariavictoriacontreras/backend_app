@@ -10,7 +10,6 @@ export class AdoptionService {
     this.em = em
   }
 
-  // 🟢 Crear una solicitud de adopción
   async createAdoptionRequest(userId: number, petId: number, formData: Record<string, any>) {
     const user = await this.em.findOne(User, { idUsuario: userId })
     const pet = await this.em.findOne(Pet, { idPet: petId })
@@ -18,7 +17,15 @@ export class AdoptionService {
     if (!user) throw new Error('Usuario no encontrado')
     if (!pet) throw new Error('Mascota no encontrada')
 
-    // ✅ Creamos la solicitud con todos los datos del formulario
+    const existingRequest = await this.em.findOne(AdoptionRequest, {
+        user: { idUsuario: userId },
+        pet: { idPet: petId },
+    });
+
+    if (existingRequest) {
+        throw new Error('Ya realizaste una solicitud para esta mascota');
+    }
+
     const request = this.em.create(AdoptionRequest, {
       date: new Date(),
       state: 'pendiente',
@@ -31,7 +38,6 @@ export class AdoptionService {
     return request
   }
 
-  // 🟣 Obtener solicitudes de adopción de un refugio
   async getAdoptionRequestsByRefuge(refugeId: number) {
     const pets = await this.em.find(Pet, { user: { idUsuario: refugeId } })
 
@@ -46,7 +52,6 @@ export class AdoptionService {
     )
   }
 
-  // 🟡 Actualizar el estado de una solicitud
   async updateAdoptionState(id: number, state: string) {
     const request = await this.em.findOne(AdoptionRequest, { idRequest: id })
     if (!request) throw new Error('Solicitud no encontrada')
