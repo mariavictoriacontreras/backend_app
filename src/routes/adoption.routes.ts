@@ -5,6 +5,7 @@ import {
   getAdoptionRequestsByRefuge,
   getAdoptionRequestsByUser,
   updateAdoptionState,
+  getAdoptionRequestById,
 } from '../controllers/adoption.controller.js'
 import { validateRole } from '../utils/validateRole.js'
 
@@ -30,7 +31,7 @@ adoptionRouter.get(
 adoptionRouter.patch(
   '/:id/state',
   authMiddleware,
-  validateRole([1]),
+  validateRole([3]),
   updateAdoptionState
 )
 
@@ -40,4 +41,12 @@ adoptionRouter.get(
   authMiddleware,
   validateRole([2]),
   getAdoptionRequestsByUser
+)
+
+// refugio ve una solicitud en detalle
+adoptionRouter.get(
+  '/:id',
+  authMiddleware,
+  validateRole([3]),
+  getAdoptionRequestById
 )
