@@ -3,8 +3,8 @@
   "tables": [
     {
       "columns": {
-        "id_rol": {
-          "name": "id_rol",
+        "id": {
+          "name": "id",
           "type": "int",
           "unsigned": true,
           "autoincrement": true,
@@ -24,14 +24,14 @@
           "mappedType": "string"
         }
       },
-      "name": "roles",
+      "name": "role",
       "indexes": [
         {
           "columnNames": [
             "nombre"
           ],
           "composite": false,
-          "keyName": "roles_nombre_unique",
+          "keyName": "role_nombre_unique",
           "constraint": true,
           "primary": false,
           "unique": true
@@ -39,7 +39,7 @@
         {
           "keyName": "PRIMARY",
           "columnNames": [
-            "id_rol"
+            "id"
           ],
           "composite": false,
           "constraint": true,
@@ -93,8 +93,8 @@
     },
     {
       "columns": {
-        "id_usuario": {
-          "name": "id_usuario",
+        "id": {
+          "name": "id",
           "type": "int",
           "unsigned": true,
           "autoincrement": true,
@@ -163,8 +163,8 @@
           "length": 255,
           "mappedType": "string"
         },
-        "rol_id_rol": {
-          "name": "rol_id_rol",
+        "id_rol": {
+          "name": "id_rol",
           "type": "int",
           "unsigned": true,
           "autoincrement": false,
@@ -198,10 +198,10 @@
         },
         {
           "columnNames": [
-            "rol_id_rol"
+            "id_rol"
           ],
           "composite": false,
-          "keyName": "user_rol_id_rol_index",
+          "keyName": "user_id_rol_index",
           "constraint": false,
           "primary": false,
           "unique": false
@@ -209,7 +209,7 @@
         {
           "keyName": "PRIMARY",
           "columnNames": [
-            "id_usuario"
+            "id"
           ],
           "composite": false,
           "constraint": true,
@@ -219,16 +219,16 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "user_rol_id_rol_foreign": {
-          "constraintName": "user_rol_id_rol_foreign",
+        "user_id_rol_foreign": {
+          "constraintName": "user_id_rol_foreign",
           "columnNames": [
-            "rol_id_rol"
+            "id_rol"
           ],
           "localTableName": "user",
           "referencedColumnNames": [
-            "id_rol"
+            "id"
           ],
-          "referencedTableName": "roles",
+          "referencedTableName": "role",
           "updateRule": "cascade"
         }
       },
@@ -273,6 +273,16 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
           "length": 255,
           "mappedType": "string"
         },
@@ -339,7 +349,7 @@
           ],
           "localTableName": "pet",
           "referencedColumnNames": [
-            "id_usuario"
+            "id"
           ],
           "referencedTableName": "user",
           "updateRule": "cascade"
@@ -724,7 +734,7 @@
           ],
           "localTableName": "adoptionRequest",
           "referencedColumnNames": [
-            "id_usuario"
+            "id"
           ],
           "referencedTableName": "user",
           "updateRule": "cascade"
