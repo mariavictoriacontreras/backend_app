@@ -3,7 +3,7 @@ import { User } from './user.js';
 
 @Entity({ tableName: 'role' })
 export class Role {
-  @PrimaryKey({ type: 'number', autoincrement: true, fieldName: 'id_rol'  })
+  @PrimaryKey({ type: 'number', autoincrement: true, fieldName: 'id'  })
   idRol?: number;
 
   @Property({ type: 'string', unique: true })

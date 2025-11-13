@@ -2,7 +2,7 @@ import { Entity, PrimaryKey, Property, ManyToOne } from '@mikro-orm/core';
 import { Role } from './role.js';
 @Entity({ tableName: 'user' })
 export class User {
-  @PrimaryKey({ type: 'number', autoincrement: true, fieldName: 'id_usuario' })
+  @PrimaryKey({ type: 'number', autoincrement: true, fieldName: 'id' })
   idUsuario?: number;
 
   @Property({type: 'string'})
@@ -23,7 +23,7 @@ export class User {
   @Property({type: 'string'})
   nroDocumento!: string; 
 
-  @ManyToOne(() => Role, { fieldName: 'rol_id_rol' })
+  @ManyToOne(() => Role, { fieldName: 'id_rol' })
   rol!: Role;
 
   @Property({type: 'string'})
