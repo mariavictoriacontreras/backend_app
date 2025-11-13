@@ -3,6 +3,96 @@
   "tables": [
     {
       "columns": {
+        "id_rol": {
+          "name": "id_rol",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "length": null,
+          "mappedType": "integer"
+        },
+        "nombre": {
+          "name": "nombre",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        }
+      },
+      "name": "roles",
+      "indexes": [
+        {
+          "columnNames": [
+            "nombre"
+          ],
+          "composite": false,
+          "keyName": "roles_nombre_unique",
+          "constraint": true,
+          "primary": false,
+          "unique": true
+        },
+        {
+          "keyName": "PRIMARY",
+          "columnNames": [
+            "id_rol"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "length": null,
+          "mappedType": "integer"
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        }
+      },
+      "name": "specie",
+      "indexes": [
+        {
+          "keyName": "PRIMARY",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
         "id_usuario": {
           "name": "id_usuario",
           "type": "int",
@@ -53,8 +143,8 @@
           "length": 255,
           "mappedType": "string"
         },
-        "rol": {
-          "name": "rol",
+        "tipo_documento": {
+          "name": "tipo_documento",
           "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
@@ -62,6 +152,26 @@
           "nullable": false,
           "length": 255,
           "mappedType": "string"
+        },
+        "nro_documento": {
+          "name": "nro_documento",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "rol_id_rol": {
+          "name": "rol_id_rol",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": null,
+          "mappedType": "integer"
         },
         "password": {
           "name": "password",
@@ -87,6 +197,16 @@
           "unique": true
         },
         {
+          "columnNames": [
+            "rol_id_rol"
+          ],
+          "composite": false,
+          "keyName": "user_rol_id_rol_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
           "keyName": "PRIMARY",
           "columnNames": [
             "id_usuario"
@@ -98,7 +218,530 @@
         }
       ],
       "checks": [],
-      "foreignKeys": {},
+      "foreignKeys": {
+        "user_rol_id_rol_foreign": {
+          "constraintName": "user_rol_id_rol_foreign",
+          "columnNames": [
+            "rol_id_rol"
+          ],
+          "localTableName": "user",
+          "referencedColumnNames": [
+            "id_rol"
+          ],
+          "referencedTableName": "roles",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "length": null,
+          "mappedType": "integer"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "birthday": {
+          "name": "birthday",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": null,
+          "mappedType": "datetime"
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "id_usuario": {
+          "name": "id_usuario",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": null,
+          "mappedType": "integer"
+        },
+        "specie_id": {
+          "name": "specie_id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": null,
+          "mappedType": "integer"
+        }
+      },
+      "name": "pet",
+      "indexes": [
+        {
+          "columnNames": [
+            "id_usuario"
+          ],
+          "composite": false,
+          "keyName": "pet_id_usuario_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "specie_id"
+          ],
+          "composite": false,
+          "keyName": "pet_specie_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "PRIMARY",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "pet_id_usuario_foreign": {
+          "constraintName": "pet_id_usuario_foreign",
+          "columnNames": [
+            "id_usuario"
+          ],
+          "localTableName": "pet",
+          "referencedColumnNames": [
+            "id_usuario"
+          ],
+          "referencedTableName": "user",
+          "updateRule": "cascade"
+        },
+        "pet_specie_id_foreign": {
+          "constraintName": "pet_specie_id_foreign",
+          "columnNames": [
+            "specie_id"
+          ],
+          "localTableName": "pet",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "specie",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "length": null,
+          "mappedType": "integer"
+        },
+        "date": {
+          "name": "date",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": null,
+          "mappedType": "datetime"
+        },
+        "state": {
+          "name": "state",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": null,
+          "mappedType": "integer"
+        },
+        "pet_id": {
+          "name": "pet_id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": null,
+          "mappedType": "integer"
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "location": {
+          "name": "location",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "contact": {
+          "name": "contact",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "has_yard": {
+          "name": "has_yard",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "agrees_indoor": {
+          "name": "agrees_indoor",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "will_use_leash": {
+          "name": "will_use_leash",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "agrees_no_wandering": {
+          "name": "agrees_no_wandering",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "has_other_pets": {
+          "name": "has_other_pets",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "other_pets_neutered": {
+          "name": "other_pets_neutered",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "other_pets_aggressive": {
+          "name": "other_pets_aggressive",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "agrees_neuter": {
+          "name": "agrees_neuter",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "agrees_vaccinate": {
+          "name": "agrees_vaccinate",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "agrees_rabies": {
+          "name": "agrees_rabies",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "agrees_deworm": {
+          "name": "agrees_deworm",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "agrees_quality_food": {
+          "name": "agrees_quality_food",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "agrees_vet_check": {
+          "name": "agrees_vet_check",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "hours_alone": {
+          "name": "hours_alone",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "walks_per_day": {
+          "name": "walks_per_day",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "caretaker_during_trips": {
+          "name": "caretaker_during_trips",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "return_reason": {
+          "name": "return_reason",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "windows_protected": {
+          "name": "windows_protected",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "agrees_followup": {
+          "name": "agrees_followup",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "agrees_interview": {
+          "name": "agrees_interview",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "household_info": {
+          "name": "household_info",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "owns_home": {
+          "name": "owns_home",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        },
+        "can_have_pets": {
+          "name": "can_have_pets",
+          "type": "tinyint(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 1,
+          "mappedType": "boolean"
+        }
+      },
+      "name": "adoptionRequest",
+      "indexes": [
+        {
+          "columnNames": [
+            "user_id"
+          ],
+          "composite": false,
+          "keyName": "adoptionRequest_user_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "pet_id"
+          ],
+          "composite": false,
+          "keyName": "adoptionRequest_pet_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "PRIMARY",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "adoptionRequest_user_id_foreign": {
+          "constraintName": "adoptionRequest_user_id_foreign",
+          "columnNames": [
+            "user_id"
+          ],
+          "localTableName": "adoptionRequest",
+          "referencedColumnNames": [
+            "id_usuario"
+          ],
+          "referencedTableName": "user",
+          "updateRule": "cascade"
+        },
+        "adoptionRequest_pet_id_foreign": {
+          "constraintName": "adoptionRequest_pet_id_foreign",
+          "columnNames": [
+            "pet_id"
+          ],
+          "localTableName": "adoptionRequest",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "pet",
+          "updateRule": "cascade"
+        }
+      },
       "nativeEnums": {}
     }
   ],

@@ -6,6 +6,7 @@ import { User } from '../entities/user.js';
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Buscamos token
+      // console.log("🔍 Headers recibidos:", req.headers);
     const header = req.headers.authorization;
     const token =
       header?.startsWith('Bearer ')
@@ -36,4 +37,6 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     console.error('Error en authMiddleware:', err);
     return res.status(401).json({ message: 'Token inválido o expirado' });
   }
+
+  
 };

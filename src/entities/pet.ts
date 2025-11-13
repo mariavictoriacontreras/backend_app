@@ -19,7 +19,7 @@ export class Pet {
   @Property({ type: 'string', nullable: true })
   imageUrl?: string;
 
-  @ManyToOne(() => User, { fieldName: 'user_id' })
+  @ManyToOne(() => User, { fieldName: 'id_usuario' })
   user!: User;
 
   @ManyToOne(() => Specie, { fieldName: 'specie_id' })

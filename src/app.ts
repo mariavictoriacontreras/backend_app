@@ -9,6 +9,8 @@ import { petRouter } from './routes/pet.routes.js';
 import { roleRouter } from './routes/role.routes.js';
 import { register, login } from './controllers/auth.controller.js';
 import { authMiddleware } from './middleware/auth.middleware.js';
+import { adoptionRouter } from './routes/adoption.routes.js';
+
 
 export const createApp = async () => {
   const app = express();
@@ -38,6 +40,7 @@ export const createApp = async () => {
   app.use('/pets', petRouter);
   app.use('/roles', roleRouter);
   app.post('/api/register', register);
+  app.use('/adoptions', adoptionRouter);
   app.post('/api/login', login);
   app.get('/api/me', authMiddleware, (req, res) => {
     return res.json({ user: (req as any).user });
