@@ -69,4 +69,13 @@ export class AdoptionService {
     { populate: ['pet'] }
   )
 }
+
+async getAdoptionRequestById(id: number) {
+  return await this.em.findOne(
+    AdoptionRequest,
+    { idRequest: id },
+    { populate: ['user', 'pet'] }
+  )
+}
+
 }

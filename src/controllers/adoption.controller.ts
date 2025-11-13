@@ -80,3 +80,21 @@ if (!userId) {
     res.status(400).json({ error: (error as Error).message })
   }
 }
+
+export async function getAdoptionRequestById(req: Request, res: Response) {
+  const orm = req.app.get('orm') as MikroORM
+  const em = orm.em.fork()
+  const service = new AdoptionService(em)
+
+  try {
+    const { id } = req.params
+    const request = await service.getAdoptionRequestById(Number(id))
+    if (!request) {
+      return res.status(404).json({ error: 'Solicitud no encontrada' })
+    }
+    res.json(request)
+  } catch (e: any) {
+    console.error('Error al obtener solicitud:', e)
+    res.status(400).json({ error: e.message })
+  }
+}
