@@ -14,7 +14,7 @@ export async function createAdoptionRequest(req: Request, res: Response) {
       return res.status(401).json({ error: 'Usuario no autenticado' });
     }
 
-    // const userId = req.user!.idUsuario; // o `id` si tu entidad usa otro nombre
+    // const userId = req.user!.idUsuario;
     const userId = Number(req.user?.idUsuario);
 
     if (isNaN(userId)) {
