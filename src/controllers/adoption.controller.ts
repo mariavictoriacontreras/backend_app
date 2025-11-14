@@ -14,7 +14,12 @@ export async function createAdoptionRequest(req: Request, res: Response) {
       return res.status(401).json({ error: 'Usuario no autenticado' });
     }
 
-    const userId = req.user.idUsuario; // o `id` si tu entidad usa otro nombre
+    // const userId = req.user!.idUsuario; // o `id` si tu entidad usa otro nombre
+    const userId = Number(req.user?.idUsuario);
+
+    if (isNaN(userId)) {
+      return res.status(400).json({ error: 'Usuario no autenticado' });
+    }
     const request = await service.createAdoptionRequest(userId, petId, formData);
 
     res.status(201).json({ message: 'Solicitud creada', request });
@@ -34,7 +39,12 @@ export async function getAdoptionRequestsByRefuge(req: Request, res: Response) {
       return res.status(401).json({ error: 'Usuario no autenticado' });
     }
 
-    const refugeId = req.user.idUsuario;
+    const refugeId = Number(req.user.idUsuario);
+    // const userId = Number(req.user?.idUsuario);
+
+    if (isNaN(refugeId)) {
+      return res.status(400).json({ error: 'Usuario no autenticado' });
+    }
     const requests = await service.getAdoptionRequestsByRefuge(refugeId);
 
     res.json(requests);
